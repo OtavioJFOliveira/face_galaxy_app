@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:face_galaxy_app/pages/lgConnection.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -37,15 +38,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -55,11 +47,12 @@ class _MyHomePageState extends State<MyHomePage> {
           title: Text("Face Galaxy"),
           backgroundColor: Colors.blue,
           leading: IconButton(icon: Icon(Icons.menu,color: Colors.white,size: 35,),
-              onPressed: _incrementCounter,
-             // onPressed: (){
+             // onPressed:
+              onPressed: (){
+              Navigator.of(context).push(MaterialPageRoute(builder: (context)=>lgConnection()));
               //  setState(() {
-               // });
-             // }
+                //});
+              }
               ),
 
         //backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -73,9 +66,9 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Container(
-                height: size.height*.45,
+              Container( height: size.height*.45,
               ),
+
               Row(
                 children: <Widget>[
                   //Container(width: size.width*.05,),
