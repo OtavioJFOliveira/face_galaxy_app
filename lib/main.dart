@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:face_galaxy_app/pages/lgConnection.dart';
 import 'package:flutter/material.dart';
 
+
 void main() {
   runApp(const MyApp());
 }
@@ -46,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
           title: Text("Face Galaxy"),
           backgroundColor: Colors.blue,
-          leading: IconButton(icon: Icon(Icons.menu,color: Colors.white,size: 35,),
+          leading: IconButton(icon: Icon(Icons.settings,color: Colors.white,size: 35,),
              // onPressed:
               onPressed: (){
               Navigator.of(context).push(MaterialPageRoute(builder: (context)=>lgConnection()));

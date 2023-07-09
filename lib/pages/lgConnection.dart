@@ -1,28 +1,42 @@
+
+
+import 'package:face_galaxy_app/pages/faceControl.dart';
 import 'package:flutter/material.dart';
 import 'package:face_galaxy_app/main.dart';
+import 'package:face_galaxy_app/services/ssh.dart';
+import 'package:face_galaxy_app/services/variables.dart';
 
 class lgConnection extends StatefulWidget {
-  static final tag = 'netinfo-page';
- // lgConnection ({Key key}):super(key:key);
+
   @override
-  _lgConnectionPageState  createState() => _lgConnectionPageState();
+  State<StatefulWidget> createState(){
+    return _lgConnectionPageState();
+  }
+  //_lgConnectionPageState  createState() => _lgConnectionPageState();
+
 }
 
-String lgIP = "";
-String username = "";
-String password ="";
-String sshPort ="";
 
-class _lgConnectionPageState extends State<lgConnection> {
+class _lgConnectionPageState extends State<lgConnection> with TickerProviderStateMixin {
   final _LGIP = TextEditingController();
   final _USARNAME= TextEditingController();
   final _PASSWORD = TextEditingController();
   final _SSHPORT = TextEditingController();
+  late TabController _tabController;
   bool _showPassword = true;
+  bool _connected = false;
   final _formInfoKey = GlobalKey<FormState>();
+  String btnText = "Save";
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
 
   @override
   void dispose() {
+    _tabController.dispose();
     _LGIP.dispose();
     _USARNAME.dispose();
     _PASSWORD.dispose();
@@ -32,6 +46,7 @@ class _lgConnectionPageState extends State<lgConnection> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Settings"),
@@ -56,14 +71,12 @@ class _lgConnectionPageState extends State<lgConnection> {
                 children: <Widget>[
                   Container(height:45),
                   Container(
-                    //height: 100,
                       width: size.width*.8,
-                      //color: Colors.green,
                       child: Form(
                         key: _formInfoKey,
                         child: Card(
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.blue,width: 3),
+                              side: BorderSide(color: Colors.blue,width: 3),
                               borderRadius: BorderRadius.circular(20)),
                           child: Container(
                             child: Column(
@@ -79,7 +92,8 @@ class _lgConnectionPageState extends State<lgConnection> {
                                     },
                                     controller: _LGIP,
                                     decoration: InputDecoration(
-                                      labelText: "LG Master IP",
+                                      labelText: lgIP,
+                                      hintText: "LG Master IP",
                                       labelStyle: TextStyle(color: Colors.black87),
                                       contentPadding: EdgeInsets.fromLTRB(30, 10,20, 10),
                                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(32)),
@@ -97,7 +111,7 @@ class _lgConnectionPageState extends State<lgConnection> {
                                     },
                                     controller: _USARNAME,
                                     decoration: InputDecoration(
-                                      labelText: "Username",
+                                      labelText: username,
                                       labelStyle: TextStyle(color: Colors.black87),
                                       contentPadding: EdgeInsets.fromLTRB(30, 10,20, 10),
                                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(32)),
@@ -116,7 +130,7 @@ class _lgConnectionPageState extends State<lgConnection> {
                                     obscureText: _showPassword,
                                     controller: _PASSWORD,
                                     decoration: InputDecoration(
-                                        labelText: "Password",
+                                        labelText: "password",
                                         labelStyle: TextStyle(color: Colors.black87),
                                         contentPadding: EdgeInsets.fromLTRB(30, 10,20, 10),
                                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32)),
@@ -142,7 +156,7 @@ class _lgConnectionPageState extends State<lgConnection> {
                                     },
                                     controller: _SSHPORT,
                                     decoration: InputDecoration(
-                                      labelText: "SSH Port",
+                                      labelText: sshPort.toString(),
                                       labelStyle: TextStyle(color: Colors.black87),
                                       contentPadding: EdgeInsets.fromLTRB(30, 10,20, 10),
                                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(32)),
@@ -151,23 +165,30 @@ class _lgConnectionPageState extends State<lgConnection> {
                                 ),
                                 Container(height:50),
                                 Container(
-                                    width: size.width*.6,
-                                    height: 50,
-                                    color: Colors.white,
+                                  width: size.width*.6,
+                                  height: 50,
+                                  color: Colors.white,
                                   child: ElevatedButton(
-                                    child: Text("Connect", style: TextStyle(
-                                        color: Colors.white,fontSize: 20,fontWeight: FontWeight.w700),),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.blue
+                                    ),
+                                    child: Text(btnText ,style: TextStyle(
+                                        color: Colors.white,fontSize: 20,fontWeight: FontWeight.w700)),
                                     onPressed: (){
                                       if(_formInfoKey.currentState!.validate()){
                                         FocusScope.of(context).requestFocus(new FocusNode());
                                         lgIP = _LGIP.text;
                                         username = _USARNAME.text;
                                         password = _PASSWORD.text;
-                                        sshPort = _SSHPORT.text;
+                                        sshPort = int.parse(_SSHPORT.text);
+                                        mainapp();
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=> CameraApp()));
+                                        //ssh('echo "flytoview=<LookAt><longitude>-122.485046</longitude><latitude>37.820047</latitude><heading>1</heading><range>3000</range><tilt>40</tilt></LookAt>" > /tmp/query.txt');
                                         setState(() {
+                                          //btnText = "disconnect";
                                           //controlBottonSend = 'NetInfo';
                                         });
-                                       // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>BluetoothPage()));
+                                        // Navigator.of(context).push(MaterialPageRoute(builder: (context)=>BluetoothPage()));
                                       }
 
                                     },
@@ -190,3 +211,5 @@ class _lgConnectionPageState extends State<lgConnection> {
     );
   }
 }
+
+
