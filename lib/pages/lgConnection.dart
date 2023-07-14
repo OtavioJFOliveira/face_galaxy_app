@@ -1,6 +1,8 @@
 
 
 import 'package:face_galaxy_app/pages/faceControl.dart';
+import 'package:face_galaxy_app/pages/face_detector_view.dart';
+import 'package:face_galaxy_app/pages/face_mesh_detector_view.dart';
 import 'package:flutter/material.dart';
 import 'package:face_galaxy_app/main.dart';
 import 'package:face_galaxy_app/services/ssh.dart';
@@ -182,7 +184,7 @@ class _lgConnectionPageState extends State<lgConnection> with TickerProviderStat
                                         password = _PASSWORD.text;
                                         sshPort = int.parse(_SSHPORT.text);
                                         mainapp();
-                                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=> CameraApp()));
+                                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=> FaceDetectorView()));
                                         //ssh('echo "flytoview=<LookAt><longitude>-122.485046</longitude><latitude>37.820047</latitude><heading>1</heading><range>3000</range><tilt>40</tilt></LookAt>" > /tmp/query.txt');
                                         setState(() {
                                           //btnText = "disconnect";
