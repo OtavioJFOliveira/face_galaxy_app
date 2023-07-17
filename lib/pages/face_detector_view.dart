@@ -68,17 +68,16 @@ class _FaceDetectorViewState extends State<FaceDetectorView> {
 
       //smileprob = faces.smil
       _customPaint = CustomPaint(painter: painter);*/
-    } else {
+    } /*else {
       String text = 'Faces found: ${faces.length}\n\n';
-      for (final face in faces) {
-        print(face.smilingProbability);
+      for (final face in faces) {;
         text += 'face: ${face.boundingBox}\n\n';
       }
       //print("face enocntrada");
       //_text = text;
       // TODO: set _customPaint to draw boundingRect on top of image
       _customPaint = null;
-    }
+    }*/
     _isBusy = false;
     if (mounted) {
       setState(() {});

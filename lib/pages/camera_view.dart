@@ -41,6 +41,7 @@ class _CameraViewState extends State<CameraView> {
   double _maxAvailableExposureOffset = 0.0;
   double _currentExposureOffset = 0.0;
   bool _changingCameraLens = false;
+  String status = "";
 
   @override
   void initState() {
@@ -102,6 +103,7 @@ class _CameraViewState extends State<CameraView> {
             _switchLiveCameraToggle(),
             //_detectionViewModeToggle(),
             _zoomControl(),
+            _lable(),
             // _exposureControl(),
           ],
         ),
@@ -177,6 +179,38 @@ class _CameraViewState extends State<CameraView> {
           ),
         ),
       );
+  Widget _lable() => Positioned(
+    bottom: 46,
+    left: 0,
+    right: 0,
+    child: Align(
+      alignment: Alignment.bottomCenter,
+      child: SizedBox(
+        width: 250,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 100,
+              decoration: BoxDecoration(
+                color: Colors.black54,
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: Text(status,
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 
   Future _startLiveFeed() async {
     final camera = _cameras[_cameraIndex];
@@ -255,14 +289,26 @@ class _CameraViewState extends State<CameraView> {
 
     final List<Face> faces = await faceDetector.processImage(inputImage!);
     double? smileprob = 0.0;
+    double? EulerRot = 0.0;
 
     // extract faces
     for (Face face in faces) {
+      EulerRot = face.leftEyeOpenProbability;
+      setState(() {
+        status = EulerRot.toString();
+      });
       if (face.smilingProbability != null) {
         smileprob = face.smilingProbability;
 
         if (smileprob != null && smileprob >= 0.86) {
+          setState(() {
+           // status = "Sorrindo";
+          });
           print("Sorrindo");
+        }else{
+          setState(() {
+           // status = "--";
+          });
         }
       }
     }
