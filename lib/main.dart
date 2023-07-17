@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:face_galaxy_app/pages/faceControl.dart';
 import 'package:face_galaxy_app/pages/lgConnection.dart';
 import 'package:flutter/material.dart';
 

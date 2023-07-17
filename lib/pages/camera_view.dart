@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mlkit_commons/google_mlkit_commons.dart';
 
+import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:image_picker/image_picker.dart';
+
 class CameraView extends StatefulWidget {
   CameraView(
       {Key? key,
@@ -76,66 +79,35 @@ class _CameraViewState extends State<CameraView> {
     if (_cameras.isEmpty) return Container();
     if (_controller == null) return Container();
     if (_controller?.value.isInitialized == false) return Container();
-    return Container(
-      color: Colors.black,
-      child: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          Center(
-            child: _changingCameraLens
-                ? Center(
-                    child: const Text('Changing camera lens'),
-                  )
-                : CameraPreview(
-                    _controller!,
-                    child: widget.customPaint,
-                  ),
-          ),
-          _backButton(),
-          _switchLiveCameraToggle(),
-          _detectionViewModeToggle(),
-          _zoomControl(),
-          _exposureControl(),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Camera Controller"),
+      ),
+      body: Container(
+        color: Colors.black,
+        child: Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            Center(
+              child: _changingCameraLens
+                  ? Center(
+                child: const Text('Changing camera lens'),
+              )
+                  : CameraPreview(
+                _controller!,
+                child: widget.customPaint,
+              ),
+            ),
+            //_backButton(),
+            _switchLiveCameraToggle(),
+            //_detectionViewModeToggle(),
+            _zoomControl(),
+            // _exposureControl(),
+          ],
+        ),
       ),
     );
   }
-
-  Widget _backButton() => Positioned(
-        top: 40,
-        left: 8,
-        child: SizedBox(
-          height: 50.0,
-          width: 50.0,
-          child: FloatingActionButton(
-            heroTag: Object(),
-            onPressed: () => Navigator.of(context).pop(),
-            backgroundColor: Colors.black54,
-            child: Icon(
-              Icons.arrow_back_ios_outlined,
-              size: 20,
-            ),
-          ),
-        ),
-      );
-
-  Widget _detectionViewModeToggle() => Positioned(
-        bottom: 8,
-        left: 8,
-        child: SizedBox(
-          height: 50.0,
-          width: 50.0,
-          child: FloatingActionButton(
-            heroTag: Object(),
-            onPressed: widget.onDetectorViewModeChanged,
-            backgroundColor: Colors.black54,
-            child: Icon(
-              Icons.photo_library_outlined,
-              size: 25,
-            ),
-          ),
-        ),
-      );
 
   Widget _switchLiveCameraToggle() => Positioned(
         bottom: 8,
@@ -206,55 +178,6 @@ class _CameraViewState extends State<CameraView> {
         ),
       );
 
-  Widget _exposureControl() => Positioned(
-        top: 40,
-        right: 8,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: 250,
-          ),
-          child: Column(children: [
-            Container(
-              width: 55,
-              decoration: BoxDecoration(
-                color: Colors.black54,
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: Text(
-                    '${_currentExposureOffset.toStringAsFixed(1)}x',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-              child: RotatedBox(
-                quarterTurns: 3,
-                child: SizedBox(
-                  height: 30,
-                  child: Slider(
-                    value: _currentExposureOffset,
-                    min: _minAvailableExposureOffset,
-                    max: _maxAvailableExposureOffset,
-                    activeColor: Colors.white,
-                    inactiveColor: Colors.white30,
-                    onChanged: (value) async {
-                      setState(() {
-                        _currentExposureOffset = value;
-                      });
-                      await _controller?.setExposureOffset(value);
-                    },
-                  ),
-                ),
-              ),
-            )
-          ]),
-        ),
-      );
-
   Future _startLiveFeed() async {
     final camera = _cameras[_cameraIndex];
     _controller = CameraController(
@@ -304,15 +227,49 @@ class _CameraViewState extends State<CameraView> {
 
   Future _switchLiveCamera() async {
     setState(() => _changingCameraLens = true);
-    _cameraIndex = (_cameraIndex + 1) % _cameras.length;
 
-    await _stopLiveFeed();
-    await _startLiveFeed();
-    setState(() => _changingCameraLens = false);
+    //_cameraIndex = (1) % _cameras.length;
+
+    if(_cameraIndex == 0){
+      _cameraIndex = (1) % _cameras.length;
+    }
+      else if(_cameraIndex == 1)
+        {
+        _cameraIndex = (0) % _cameras.length;
+        }
+      await _stopLiveFeed();
+      await _startLiveFeed();
+      setState(() => _changingCameraLens = false);
+
   }
 
-  void _processCameraImage(CameraImage image) {
+  Future<void> _processCameraImage(CameraImage image) async {
     final inputImage = _inputImageFromCameraImage(image);
+    //----------------------------------------------------------------
+
+    final faceDetector = GoogleMlKit.vision.faceDetector(FaceDetectorOptions(
+        enableClassification: true,
+        enableLandmarks: true,
+        enableContours: true,
+        enableTracking: true));
+
+    final List<Face> faces = await faceDetector.processImage(inputImage!);
+    double? smileprob = 0.0;
+
+    // extract faces
+    for (Face face in faces) {
+      if (face.smilingProbability != null) {
+        smileprob = face.smilingProbability;
+
+        if (smileprob != null && smileprob >= 0.86) {
+          print("Sorrindo");
+        }
+      }
+    }
+    faceDetector.close();
+
+    //-----------------------------------------------------------------
+
     if (inputImage == null) return;
     widget.onImage(inputImage);
   }

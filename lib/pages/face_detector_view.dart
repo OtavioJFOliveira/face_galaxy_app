@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 
 import 'detector_view.dart';
-//import 'painters/face_detector_painter.dart';
+import 'painters/face_detector_painter.dart';
 
 class FaceDetectorView extends StatefulWidget {
   @override
@@ -13,8 +13,10 @@ class FaceDetectorView extends StatefulWidget {
 class _FaceDetectorViewState extends State<FaceDetectorView> {
   final FaceDetector _faceDetector = FaceDetector(
     options: FaceDetectorOptions(
-      enableContours: true,
-      enableLandmarks: true,
+        enableClassification: true,
+        enableLandmarks: true,
+        enableContours: true,
+        enableTracking: true
     ),
   );
   bool _canProcess = true;
@@ -63,6 +65,7 @@ class _FaceDetectorViewState extends State<FaceDetectorView> {
         _cameraLensDirection,
       );
       //print("face enocntrada");
+
       //smileprob = faces.smil
       _customPaint = CustomPaint(painter: painter);*/
     } else {

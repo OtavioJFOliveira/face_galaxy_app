@@ -183,7 +183,7 @@ class _lgConnectionPageState extends State<lgConnection> with TickerProviderStat
                                         username = _USARNAME.text;
                                         password = _PASSWORD.text;
                                         sshPort = int.parse(_SSHPORT.text);
-                                        mainapp();
+                                       // mainapp();
                                         Navigator.of(context).push(MaterialPageRoute(builder: (context)=> FaceDetectorView()));
                                         //ssh('echo "flytoview=<LookAt><longitude>-122.485046</longitude><latitude>37.820047</latitude><heading>1</heading><range>3000</range><tilt>40</tilt></LookAt>" > /tmp/query.txt');
                                         setState(() {

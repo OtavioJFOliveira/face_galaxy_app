@@ -1,17 +1,16 @@
-import 'dart:async';
-
-import 'package:face_galaxy_app/pages/lgConnection.dart';
-import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
 
 late List<CameraDescription> _cameras;
-Future<void> mainapp() async {
+
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   _cameras = await availableCameras();
   runApp(const CameraApp());
 }
 
+/// CameraApp is the Main Application.
 class CameraApp extends StatefulWidget {
   /// Default Constructor
   const CameraApp({super.key});
@@ -26,7 +25,7 @@ class _CameraAppState extends State<CameraApp> {
   @override
   void initState() {
     super.initState();
-    controller = CameraController(_cameras[1], ResolutionPreset.max);
+    controller = CameraController(_cameras[-1], ResolutionPreset.max);
     controller.initialize().then((_) {
       if (!mounted) {
         return;
@@ -58,12 +57,7 @@ class _CameraAppState extends State<CameraApp> {
       return Container();
     }
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-
-      home: Container(
-        //child: Camera,
-        child:CameraPreview(controller) ,
-      ),
+      home: CameraPreview(controller),
     );
   }
 }
